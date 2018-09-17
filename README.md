@@ -31,3 +31,51 @@ Follow basic setup [here[(https://github.com/openshift/origin/blob/master/docs/c
 ```bash
 oc cluster up --tag=v3.11
 ```
+
+### OLM
+After deploying a cluster, run OLM:
+
+```bash
+curl https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/scripts/run_console_local.sh | bash -
+```
+
+##### Deploy OLM with ansible playbooks
+```bash
+git clone https://github.com/fusor/catasb
+```
+
+At the top level of the catasb directory, run:
+```bash
+cp config/my_vars.yml.example config/my_vars.yml
+
+cat <<EOT >> config/my_vars.yml
+origin_image_tag: v3.11
+openshift_client_version: latest
+
+deploy_olm: true
+deploy_admin_console: true
+olm_version: "0.6.0"
+admin_console_image: "quay.io/openshift/origin-console:latest"
+EOT
+```
+
+If you create the cluster in a VM and want to access the console from your local
+browser, then:
+```bash
+IP=ip addr show eth0 | grep -Po 'inet \K[\d.]+'
+
+cat <<EOT >> config/my_vars.yml
+hostname: $IP
+openshift_routing_suffix: $IP.nip.io
+EOT
+```
+
+Move into the directory of your base OS local/<MY_OS> e.g. `cd local/linux`
+and run:
+```bash
+## Fist deploy ONLY
+./run_setup_local.sh
+
+## Deploy everyother time with
+./reset_environment.sh
+```
