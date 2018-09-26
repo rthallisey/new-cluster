@@ -1,7 +1,7 @@
 # new-cluster
 There's lots of information on the web on the many different ways to install
 Kubernetes or OpenShift.  The goal of this document is to point out only the
-essential documentationn and provide some commands that will reliably give you a
+essential documentation and provide some commands that will reliably give you a
 single-node developer deployment.
 
 ### Kubernetes
@@ -26,7 +26,7 @@ kubectl -n kube-system get deployment coredns -o yaml | \
 ```
 
 ### OpenShift
-Follow basic setup [here[(https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md#getting-started)
+Follow basic setup [here](https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md#getting-started)
 
 ```bash
 oc cluster up --tag=v3.11
