@@ -79,3 +79,17 @@ and run:
 ## Deploy everyother time with
 ./reset_environment.sh
 ```
+
+##### OLM on minishift
+```bash
+minishift start --disk-size=40G --memory=6G
+eval $(minishift oc-env)
+eval $(minishift docker-env)
+ln -s $(which oc) $(dirname $(which oc))/kubectl
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
+chmod 700 get_helm.sh
+./get_helm.sh
+git clone https://github.com/operator-framework/operator-lifecycle-manager.git
+cd operator-lifecycle-manager/
+make run-local-shift
+```
