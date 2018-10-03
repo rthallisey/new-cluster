@@ -26,20 +26,38 @@ kubectl -n kube-system get deployment coredns -o yaml | \
 ```
 
 ### OpenShift
+
+| Requirements |
+| :----------- |
+| oc >= 3.11 alpha (you can download the latest binary used in APB-OC from [here](https://apb-oc.s3.amazonaws.com/apb-oc/oc-linux-64bit.tar.gz)) |
+
 Follow basic setup [here](https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md#getting-started)
+Please note that the official quick start guide recommends to configure an insecure registry in `/etc/containers/registries.conf` **or** `/etc/docker/daemon.json` while instead you need **both** the changes.
+Then:
 
 ```bash
-oc cluster up --tag=v3.11
+IP=$(ip addr show eth0 | grep -Po 'inet \K[\d.]+')
+oc cluster up --tag=v3.11 --public-hostname=${IP}
 ```
 
 ### OLM
-After deploying a cluster, run OLM:
+| Requirements |
+| :----------- |
+| jq           |
 
+After deploying a cluster, run OLM:
 ```bash
-curl https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/scripts/run_console_local.sh | bash -
+curl https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/scripts/run_console_local.sh -o run_console_local.sh
+chmod +x run_console_local.sh
+./run_console_local.sh &
 ```
 
 ##### Deploy OLM with ansible playbooks
+| Requirements |
+| :----------- |
+| oc >= 3.11   |
+| ansible >= 2.4 |
+
 ```bash
 git clone https://github.com/fusor/catasb
 ```
@@ -54,7 +72,7 @@ openshift_client_version: latest
 
 deploy_olm: true
 deploy_admin_console: true
-olm_version: "0.6.0"
+olm_version: "0.7.1"
 admin_console_image: "quay.io/openshift/origin-console:latest"
 EOT
 ```
@@ -62,7 +80,7 @@ EOT
 If you create the cluster in a VM and want to access the console from your local
 browser, then:
 ```bash
-IP=ip addr show eth0 | grep -Po 'inet \K[\d.]+'
+IP=$(ip addr show eth0 | grep -Po 'inet \K[\d.]+')
 
 cat <<EOT >> config/my_vars.yml
 hostname: $IP
